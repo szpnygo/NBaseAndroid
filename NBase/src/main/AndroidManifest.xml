@@ -1,0 +1,8 @@
+<manifest package="info.smemo.nbase"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="23"
+        />
+</manifest>

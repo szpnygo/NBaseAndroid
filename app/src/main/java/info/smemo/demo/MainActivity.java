@@ -2,9 +2,9 @@ package info.smemo.demo;
 
 import android.os.Bundle;
 
-import info.smemo.nbase.base.BaseActivity;
+import info.smemo.nbase.base.NBaseActivity;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends NBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

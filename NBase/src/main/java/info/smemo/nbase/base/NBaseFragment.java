@@ -1,37 +1,39 @@
 package info.smemo.nbase.base;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import java.lang.ref.WeakReference;
 
 import info.smemo.nbase.app.AppConstant;
-import info.smemo.nbase.app.AppManager;
 
 /**
  * Created by neo on 16/6/7.
  */
-public class BaseActivity extends Activity implements AppConstant{
+public class NBaseFragment extends Fragment implements AppConstant{
+
+    protected FragmentManager mFragmentManager;
 
     protected ProgressDialog mProgressDialog;
     protected final BaseHandler mBaseHandler = new BaseHandler(this);
 
     private static final int SHOW_PROGRESS_DIALOG = 0x110001;
+    private static final int DISMISS_PROGRESS_DIALOG = 0X110002;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //add activity to activity manager
-        AppManager.getAppManager().addActivity(this);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mFragmentManager = getChildFragmentManager();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        AppManager.getAppManager().finishActivity(this);
         destoryProgressDialog();
         mProgressDialog = null;
     }
@@ -43,7 +45,7 @@ public class BaseActivity extends Activity implements AppConstant{
      */
     protected void showProgressDialog(String title) {
         if (null == mProgressDialog) {
-            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog = new ProgressDialog(getContext());
             mProgressDialog.setCancelable(false);
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             mProgressDialog.setMessage(title);
@@ -67,12 +69,9 @@ public class BaseActivity extends Activity implements AppConstant{
      * dismiss progress dialog
      */
     protected void dismissProgressDialog() {
-        BaseActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                destoryProgressDialog();
-            }
-        });
+        Message message = new Message();
+        message.what = DISMISS_PROGRESS_DIALOG;
+        mBaseHandler.sendMessage(message);
     }
 
     private void destoryProgressDialog() {
@@ -86,24 +85,27 @@ public class BaseActivity extends Activity implements AppConstant{
             case SHOW_PROGRESS_DIALOG:
                 showProgressDialog(msg.getData().getString("title"));
                 break;
+            case DISMISS_PROGRESS_DIALOG:
+                destoryProgressDialog();
+                break;
         }
     }
 
     protected static class BaseHandler extends Handler {
 
-        private final WeakReference<BaseActivity> mBaseActivityWeakReference;
+        private final WeakReference<NBaseFragment> mBaseFragmentWeakReference;
 
-        public BaseHandler(BaseActivity baseActivity) {
+        public BaseHandler(NBaseFragment baseFragment) {
             super();
-            mBaseActivityWeakReference = new WeakReference<>(baseActivity);
+            mBaseFragmentWeakReference = new WeakReference<>(baseFragment);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            BaseActivity baseActivity = mBaseActivityWeakReference.get();
-            if (null != baseActivity) {
-                baseActivity.handleMessage(msg);
+            NBaseFragment baseFragment = mBaseFragmentWeakReference.get();
+            if (null != baseFragment) {
+                baseFragment.handleMessage(msg);
             }
         }
     }

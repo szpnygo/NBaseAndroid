@@ -36,4 +36,6 @@ dependencies {
     compile 'com.facebook.fresco:animated-webp:0.10.0'
     compile 'com.facebook.fresco:webpsupport:0.10.0'
     compile 'com.facebook.fresco:webpsupport:0.10.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.0'
 }

@@ -7,19 +7,23 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 
 import info.smemo.nbase.app.AppConstant;
+import info.smemo.nbase.ui.MaterialDialog;
 
 /**
  * Created by neo on 16/6/7.
  */
-public class NBaseFragment extends Fragment implements AppConstant{
+public class NBaseFragment extends Fragment implements AppConstant {
 
     protected FragmentManager mFragmentManager;
 
     protected ProgressDialog mProgressDialog;
+    private MaterialDialog mMessageDialog;
+
     protected final BaseHandler mBaseHandler = new BaseHandler(this);
 
     private static final int SHOW_PROGRESS_DIALOG = 0x110001;
@@ -108,6 +112,35 @@ public class NBaseFragment extends Fragment implements AppConstant{
                 baseFragment.handleMessage(msg);
             }
         }
+    }
+
+    private void showMessage(String title, String message) {
+        showMessage(title, message, null, null);
+    }
+
+    private void showMessage(String title, String message, final View.OnClickListener okClickListener, final View.OnClickListener cancelListener) {
+        if (null == mMessageDialog)
+            mMessageDialog = new MaterialDialog(getContext());
+        mMessageDialog
+                .setPositiveButton("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (okClickListener != null)
+                            okClickListener.onClick(v);
+                        mMessageDialog.dismiss();
+                    }
+                })
+                .setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (cancelListener != null)
+                            cancelListener.onClick(v);
+                        mMessageDialog.dismiss();
+                    }
+                })
+                .setTitle(title)
+                .setMessage(message);
+        mMessageDialog.show();
     }
 
 }

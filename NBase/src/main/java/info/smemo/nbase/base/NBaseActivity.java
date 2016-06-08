@@ -2,28 +2,43 @@ package info.smemo.nbase.base;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 
 import info.smemo.nbase.app.AppConstant;
 import info.smemo.nbase.app.AppManager;
+import info.smemo.nbase.ui.MaterialDialog;
 
 /**
  * Created by neo on 16/6/7.
  */
-public class NBaseActivity extends Activity implements AppConstant{
+public class NBaseActivity extends Activity implements AppConstant {
 
     protected ProgressDialog mProgressDialog;
+    private MaterialDialog mMessageDialog;
+
     protected final BaseHandler mBaseHandler = new BaseHandler(this);
 
     private static final int SHOW_PROGRESS_DIALOG = 0x110001;
 
+    protected void onCreateDataBinding() {
+
+    }
+
+    protected <T extends ViewDataBinding> T createContentView(int layout) {
+        return DataBindingUtil.setContentView(this, layout);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onCreateDataBinding();
         //add activity to activity manager
         AppManager.getAppManager().addActivity(this);
     }
@@ -106,6 +121,35 @@ public class NBaseActivity extends Activity implements AppConstant{
                 baseActivity.handleMessage(msg);
             }
         }
+    }
+
+    private void showMessage(String title, String message) {
+        showMessage(title, message, null, null);
+    }
+
+    private void showMessage(String title, String message, final View.OnClickListener okClickListener, final View.OnClickListener cancelListener) {
+        if (null == mMessageDialog)
+            mMessageDialog = new MaterialDialog(this);
+        mMessageDialog
+                .setPositiveButton("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (okClickListener != null)
+                            okClickListener.onClick(v);
+                        mMessageDialog.dismiss();
+                    }
+                })
+                .setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (cancelListener != null)
+                            cancelListener.onClick(v);
+                        mMessageDialog.dismiss();
+                    }
+                })
+                .setTitle(title)
+                .setMessage(message);
+        mMessageDialog.show();
     }
 
 }

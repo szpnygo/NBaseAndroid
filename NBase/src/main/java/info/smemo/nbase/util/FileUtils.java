@@ -167,7 +167,7 @@ public class FileUtils {
     /**
      * 添加到本地缓存当中
      */
-    public void saveBitmap(String name, Bitmap bitmap, Context context) {
+    public void saveBitmap(String path, String name, Bitmap bitmap) {
         if (bitmap == null)
             return;
         // 如果sdcard不能使用
@@ -176,19 +176,13 @@ public class FileUtils {
             return;
         }
         // 拼接图片要保存到sd卡的地址
-        String BitPath = getAbsolutePath(context) + File.separator + name;
-        File f = new File(getAbsolutePath(context));
+        File f = new File(path);
         if (!f.exists()) {
             f.mkdir();
         }
-        // mtn/sdcard/android/com.anjoyo.zhangxinyi/files/
+        File imgFile = new File(f, name);
         try {
-            FileOutputStream fos = new FileOutputStream(BitPath);
-            /**
-             * bitmap.compress把图片通过输出流保存到本地 Bitmap.CompressFormat.JPEG 保存图片的格式
-             * 100 保存到本地的图片质量，需要压缩时适当调整大小
-             *
-             * */
+            FileOutputStream fos = new FileOutputStream(imgFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();

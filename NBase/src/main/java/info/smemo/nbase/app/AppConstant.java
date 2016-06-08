@@ -15,6 +15,11 @@ public interface AppConstant extends AppConfig {
     String TAG = "NBaseAndroid";
 
     /**
+     * SharedPreferences File Name
+     */
+    String SP_NAME = "NBaseAndroid";
+
+    /**
      * 日志地址
      */
     String LOG_PATH = Environment.getExternalStorageDirectory() + File.separator + "NBaseAndroid" + File.separator + "Log" + File.separator;

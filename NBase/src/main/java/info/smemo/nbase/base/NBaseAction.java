@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import info.smemo.nbase.http.HttpUtil;
 import info.smemo.nbase.util.StringUtil;
+import okhttp3.CacheControl;
 import okhttp3.Response;
 
 /**
@@ -18,20 +19,24 @@ import okhttp3.Response;
  */
 public class NBaseAction {
 
-    public static void get(@NonNull final String url, @NonNull HttpActionListener listener) {
+    public static void get(@NonNull String url, @NonNull HttpActionListener listener) {
         get(url, null, listener);
     }
 
-    public static void get(@NonNull final String url, @Nullable final HashMap<String, String> map, @NonNull HttpActionListener listener) {
+    public static void get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull HttpActionListener listener) {
         get(url, map, true, listener);
     }
 
-    public static void get(@NonNull final String url, @Nullable final HashMap<String, String> map, @NonNull final boolean isCookie, @NonNull final HttpActionListener listener) {
+    public static void get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull boolean isCookie, @NonNull HttpActionListener listener) {
         get(url, map, isCookie, listener, defaultAction);
     }
 
-    public static void get(@NonNull final String url, @Nullable final HashMap<String, String> map, @NonNull final boolean isCookie, @NonNull final HttpActionListener listener, final ParseDataAction action) {
-        HttpUtil.get(url, map, isCookie, new HttpUtil.HttpResponseListener() {
+    public static void get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull boolean isCookie, @NonNull HttpActionListener listener, ParseDataAction action) {
+        get(url, map, isCookie, null, listener, action);
+    }
+
+    public static void get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpActionListener listener, final ParseDataAction action) {
+        HttpUtil.get(url, map, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
             public void success(@NonNull Response response) {
                 action.parse(response, listener);
@@ -43,6 +48,37 @@ public class NBaseAction {
             }
         });
     }
+
+    public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @NonNull final HttpActionListener listener) {
+        post(url, map, null, listener);
+    }
+
+    public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull final HttpActionListener listener) {
+        post(url, map, headers, true, listener);
+    }
+
+    public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @NonNull final HttpActionListener listener) {
+        post(url, map, headers, true, null, listener);
+    }
+
+    public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpActionListener listener) {
+        post(url, map, headers, isCookie, cacheControl, listener, defaultAction);
+    }
+
+    public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpActionListener listener, final ParseDataAction action) {
+        HttpUtil.post(url, map, headers, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
+            @Override
+            public void success(@NonNull Response response) {
+                action.parse(response, listener);
+            }
+
+            @Override
+            public void failure(String message) {
+                listener.failure(message);
+            }
+        });
+    }
+
 
     private static ParseDataAction defaultAction = new ParseDataAction() {
 

@@ -123,7 +123,7 @@ public class NBaseFragmentActivity extends FragmentActivity implements AppConsta
         }
     }
 
-    private void showMessage(String title, String message) {
+    protected void showMessage(String title, String message) {
         showMessage(title, message, null, null);
     }
 

@@ -1,15 +1,20 @@
 package info.smemo.demo;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import info.smemo.nbase.base.NBaseAction;
-import info.smemo.nbase.base.NBaseActivity;
-import info.smemo.nbase.util.LogHelper;
-import okhttp3.Response;
+import com.facebook.drawee.view.SimpleDraweeView;
 
-public class MainActivity extends NBaseActivity {
+import info.smemo.nbase.activity.NPhotoActivity;
+import info.smemo.nbase.util.FrescoUtil;
+
+public class MainActivity extends NPhotoActivity {
+
+    SimpleDraweeView mImageView;
 
     private TextView mButton;
 
@@ -18,30 +23,20 @@ public class MainActivity extends NBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mButton = (TextView) findViewById(R.id.button);
+        mImageView = (SimpleDraweeView) findViewById(R.id.imageView);
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NBaseAction.get("https://api.smemo.info/api.php/v2/Backup/lists", new NBaseAction.HttpActionListener() {
-                    @Override
-                    public void success(Response response, String body) {
-                        LogHelper.e(TAG, body);
-                    }
-
-                    @Override
-                    public void error(int code, String message) {
-                        LogHelper.e(TAG, message);
-                    }
-
-                    @Override
-                    public void failure(String message) {
-                        LogHelper.e(TAG, message);
-                    }
-                });
-
+                takePhoto(false);
             }
         });
     }
 
+    @Override
+    public void takePhotoSuccess(@NonNull Uri imageFile, @Nullable String path) {
+        super.takePhotoSuccess(imageFile, path);
+        FrescoUtil.loadImageWithFixSize(mImageView, imageFile, 200, 200);
+    }
 
 }

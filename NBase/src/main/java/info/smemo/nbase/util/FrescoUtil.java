@@ -47,6 +47,10 @@ public class FrescoUtil {
         view.setImageURI(Uri.parse(url));
     }
 
+    public static void setImageUri(SimpleDraweeView view, Uri uri) {
+        view.setImageURI(uri);
+    }
+
     /**
      * 加载多级图片
      *
@@ -66,7 +70,11 @@ public class FrescoUtil {
      * 展示指定大小
      */
     public static void loadImageWithFixSize(SimpleDraweeView simpleDraweeView, String uri, int width, int height) {
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(getUri(uri))
+        loadImageWithFixSize(simpleDraweeView, Uri.parse(uri), width, height);
+    }
+
+    public static void loadImageWithFixSize(SimpleDraweeView simpleDraweeView, Uri uri, int width, int height) {
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setResizeOptions(new ResizeOptions(width, height))
                 .build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()

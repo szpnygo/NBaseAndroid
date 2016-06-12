@@ -16,6 +16,12 @@ import java.util.List;
 
 public class PackageUtil {
 
+    public static boolean checkPermission(Context context, String permission, String packagename) {
+        PackageManager pm = context.getPackageManager();
+        return (PackageManager.PERMISSION_GRANTED == pm.checkPermission(permission, packagename));
+    }
+
+
     /**
      * 开启系统默认安装程序
      *

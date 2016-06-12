@@ -41,5 +41,9 @@ public interface AppConstant extends AppConfig {
     int HTTP_WRITE_TIMEOUT = 20;
     int HTTP_READ_TIMEOUR = 60;
 
+    /**
+     * 照片缓存路径
+     */
+    String PHOTO_CACHE_PATH = Environment.getExternalStorageDirectory() + File.separator + "NBaseAndroid" + File.separator + "nbaseandroid" + File.separator + "img";
 
 }

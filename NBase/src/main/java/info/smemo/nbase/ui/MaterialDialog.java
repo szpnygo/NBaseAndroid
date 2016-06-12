@@ -194,7 +194,7 @@ public class MaterialDialog {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(dip2px(12), 0, dip2px(12), dip2px(BUTTON_BOTTOM));
+        layoutParams.setMargins(dip2px(2), 0, dip2px(12), dip2px(BUTTON_BOTTOM));
         mPositiveButton.setLayoutParams(layoutParams);
         mPositiveButton.setOnClickListener(listener);
         if (isLollipop()) {
@@ -376,7 +376,7 @@ public class MaterialDialog {
             button.setText(text);
             button.setGravity(Gravity.CENTER);
             button.setTextSize(14);
-            button.setPadding(dip2px(12), 0, dip2px(32), dip2px(BUTTON_BOTTOM));
+            button.setPadding(dip2px(12), 0, dip2px(12), dip2px(BUTTON_BOTTOM));
             button.setOnClickListener(listener);
             mButtonLayout.addView(button);
         }

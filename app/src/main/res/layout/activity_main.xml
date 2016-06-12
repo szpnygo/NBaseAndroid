@@ -17,4 +17,15 @@
         android:gravity="center"
         android:text="Hello World!"
         />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/button"
+        android:layout_below="@+id/button"/>
+
+
 </RelativeLayout>

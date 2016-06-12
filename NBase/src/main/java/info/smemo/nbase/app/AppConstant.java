@@ -13,6 +13,7 @@ public interface AppConstant extends AppConfig {
      * 标签
      */
     String TAG = "NBaseAndroid";
+    String TAG_HTTP = TAG + "_Http";
 
     /**
      * SharedPreferences File Name

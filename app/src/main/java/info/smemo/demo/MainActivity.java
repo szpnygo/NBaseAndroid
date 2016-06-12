@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import info.smemo.nbase.base.NBaseAction;
 import info.smemo.nbase.base.NBaseActivity;
-import info.smemo.nbase.http.HttpUtil;
+import info.smemo.nbase.util.LogHelper;
+import okhttp3.Response;
 
 public class MainActivity extends NBaseActivity {
 
@@ -20,12 +22,22 @@ public class MainActivity extends NBaseActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                NBaseAction.get("https://api.smemo.info/api.php/v2/Backup/lists", new NBaseAction.HttpActionListener() {
                     @Override
-                    public void run() {
-                        HttpUtil.get("");
+                    public void success(Response response, String body) {
+                        LogHelper.e(TAG, body);
                     }
-                }).start();
+
+                    @Override
+                    public void error(int code, String message) {
+                        LogHelper.e(TAG, message);
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        LogHelper.e(TAG, message);
+                    }
+                });
 
             }
         });

@@ -83,7 +83,7 @@ public class NBaseAction {
     private static ParseDataAction defaultAction = new ParseDataAction() {
 
         @Override
-        public void parse(Response response, HttpActionListener listener) {
+        public void parse(@NonNull Response response, @NonNull HttpActionListener listener) {
             try {
                 if (!response.isSuccessful()) {
                     listener.error(response.code(), response.toString());
@@ -113,17 +113,17 @@ public class NBaseAction {
 
     public interface HttpActionListener {
 
-        void success(Response response, String body);
+        void success(@NonNull Response response, @Nullable String body);
 
         void error(int code, String message);
 
-        void failure(String message);
+        void failure(@Nullable String message);
 
     }
 
     public interface ParseDataAction {
 
-        void parse(Response response, HttpActionListener listener);
+        void parse(@NonNull Response response, @NonNull HttpActionListener listener);
 
     }
 

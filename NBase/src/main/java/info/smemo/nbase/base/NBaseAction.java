@@ -3,12 +3,19 @@ package info.smemo.nbase.base;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 
+import info.smemo.nbase.app.AppConstant;
+import info.smemo.nbase.bean.CommonJson;
+import info.smemo.nbase.bean.CommonJsonList;
 import info.smemo.nbase.http.HttpUtil;
 import info.smemo.nbase.util.StringUtil;
 import okhttp3.CacheControl;
@@ -17,7 +24,7 @@ import okhttp3.Response;
 /**
  * Created by neo on 16/6/12.
  */
-public class NBaseAction {
+public class NBaseAction implements AppConstant {
 
     public static void get(@NonNull String url, @NonNull HttpActionListener listener) {
         get(url, null, listener);
@@ -111,6 +118,34 @@ public class NBaseAction {
         }
     };
 
+    public static <T> T fromJson(String json, Class clazz) {
+        Gson gson = new Gson();
+        Type objectType = type(CommonJson.class, clazz);
+        return gson.fromJson(json, objectType);
+    }
+
+    public static <T> T fromJsonList(String json, Class clazz) {
+        Gson gson = new Gson();
+        Type objectType = type(CommonJsonList.class, clazz);
+        return gson.fromJson(json, objectType);
+    }
+
+    static ParameterizedType type(final Class raw, final Type... args) {
+        return new ParameterizedType() {
+            public Type getRawType() {
+                return raw;
+            }
+
+            public Type[] getActualTypeArguments() {
+                return args;
+            }
+
+            public Type getOwnerType() {
+                return null;
+            }
+        };
+    }
+
     public interface HttpActionListener {
 
         void success(@NonNull Response response, @Nullable String body);
@@ -124,6 +159,14 @@ public class NBaseAction {
     public interface ParseDataAction {
 
         void parse(@NonNull Response response, @NonNull HttpActionListener listener);
+
+    }
+
+    public interface HttpResponseListener<T> {
+
+        void success(T t);
+
+        void error(int code, String message);
 
     }
 

@@ -3,7 +3,7 @@ package info.smemo.nbase.app;
 /**
  * Created by neo on 16/6/7.
  */
-public interface AppConfig {
+public interface AppConfig extends AppError{
 
     /**
      * 是否打印LOG

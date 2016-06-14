@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import info.smemo.nbase.BR;
 import info.smemo.nbase.R;
 import info.smemo.nbase.app.AppConstant;
-import info.smemo.nbase.base.NBaseBindingAdapter;
+import info.smemo.nbase.adapter.NBaseBindingAdapter;
 import info.smemo.nbase.bean.SelectBean;
 
 /**

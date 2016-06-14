@@ -51,7 +51,7 @@ public class NBaseAction implements AppConstant {
 
             @Override
             public void failure(String message) {
-                listener.failure(message);
+                listener.failure(ERROR_NETWORK_ERROR, message);
             }
         });
     }
@@ -81,7 +81,7 @@ public class NBaseAction implements AppConstant {
 
             @Override
             public void failure(String message) {
-                listener.failure(message);
+                listener.failure(ERROR_NETWORK_ERROR, message);
             }
         });
     }
@@ -98,7 +98,7 @@ public class NBaseAction implements AppConstant {
                 }
                 String bodyStr = response.body().string();
                 if (StringUtil.isEmpty(bodyStr)) {
-                    listener.error(response.code(), "Response Body is empty");
+                    listener.failure(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
                     return;
                 }
                 JSONObject object = new JSONObject(bodyStr);
@@ -109,10 +109,10 @@ public class NBaseAction implements AppConstant {
                     listener.error(code, object.getString("message"));
                 }
             } catch (JSONException e) {
-                listener.failure(e.getMessage());
+                listener.failure(ERROR_DATA_ERROR, e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
-                listener.failure(e.getMessage());
+                listener.failure(ERROR_DATA_ERROR, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -152,7 +152,7 @@ public class NBaseAction implements AppConstant {
 
         void error(int code, String message);
 
-        void failure(@Nullable String message);
+        void failure(int code, @Nullable String message);
 
     }
 

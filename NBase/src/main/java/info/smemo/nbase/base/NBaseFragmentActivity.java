@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import info.smemo.nbase.app.AppConstant;
 import info.smemo.nbase.app.AppManager;
 import info.smemo.nbase.ui.MaterialDialog;
+import info.smemo.nbase.util.ViewInjectUtils;
 
 /**
  * Created by neo on 16/6/7.
@@ -150,5 +151,9 @@ public class NBaseFragmentActivity extends FragmentActivity implements AppConsta
                 .setTitle(title)
                 .setMessage(message);
         mMessageDialog.show();
+    }
+
+    protected void injectView() {
+        ViewInjectUtils.inject(this);
     }
 }

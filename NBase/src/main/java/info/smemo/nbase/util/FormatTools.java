@@ -13,12 +13,17 @@ import android.graphics.drawable.Drawable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 /**
  * @author jkong
  */
 public class FormatTools {
     private static FormatTools tools = new FormatTools();
+
+    public static float getFormatFloat(float f, int num) {
+        return new BigDecimal(f).setScale(num, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
 
     public static FormatTools getInstance() {
         if (tools == null) {

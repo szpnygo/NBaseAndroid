@@ -1,8 +1,8 @@
 package info.smemo.demo;
 
 import info.smemo.nbase.http.BaseHttpBean;
+import info.smemo.nbase.http.annotation.HttpGetParameter;
 import info.smemo.nbase.http.annotation.HttpPostTarget;
-import info.smemo.nbase.http.annotation.HttpRequestName;
 import info.smemo.nbase.http.annotation.HttpUnusedParam;
 
 /**
@@ -11,13 +11,16 @@ import info.smemo.nbase.http.annotation.HttpUnusedParam;
 @HttpPostTarget("https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html")
 public class HttpTestBean extends BaseHttpBean {
 
-    public String id;
+    @HttpGetParameter("id")
+    public String gameid;
 
+    @HttpGetParameter
     public int num;
 
     @HttpUnusedParam
     public String postText2;
 
-    @HttpRequestName("truename")
-    public String postText3;
+    public HttpTestBean(String gameid) {
+        this.gameid = gameid;
+    }
 }

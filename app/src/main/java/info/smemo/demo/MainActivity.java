@@ -33,16 +33,24 @@ public class MainActivity extends NPhotoActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                httpTest4();
+                httpTest5();
             }
         });
     }
 
-    private void getHttp() {
-        httpTest1();
-        String url = "https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html";
+    private void httpTest5() {
+        HttpTestBean bean = new HttpTestBean("6");
+        bean.execute(FundBean.class, new NBaseAction.HttpActionListListener<List<FundBean>>() {
+            @Override
+            public void success(List<FundBean> response) {
+                LogHelper.e(TAG, response.size() + "length");
+            }
 
-
+            @Override
+            public void error(int code, String message, boolean inMain) {
+                LogHelper.e(TAG, "error " + message + ":" + code);
+            }
+        });
     }
 
 

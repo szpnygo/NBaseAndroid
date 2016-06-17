@@ -48,6 +48,7 @@ public class HttpUtil implements AppConstant {
     public enum HttpType {
         POST,
         GET,
+        ERROR,
     }
 
     public enum ThreadType {
@@ -235,7 +236,7 @@ public class HttpUtil implements AppConstant {
             }
         }
         //add post
-        if (type == HttpType.POST) {
+        if (type == HttpType.POST && postMap != null && postMap.size() > 0) {
             builder.post(createRequestBody(postMap));
         }
 

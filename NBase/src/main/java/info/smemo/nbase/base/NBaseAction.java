@@ -49,7 +49,17 @@ public class NBaseAction extends HttpUtil {
         return request(clazz, HttpType.POST, url, null, map, null, true, null, null, null, listListener);
     }
 
-    public static <T> HttpBuilder request(@NonNull final Class<T> clazz, @NonNull HttpType httpType, @NonNull String url,
+
+    public static <T> HttpBuilder request(@NonNull final Class<T> clazz, @Nullable final HttpActionListListener<List<T>> listListener) {
+        return request(clazz, HttpType.POST, null, null, null, null, true, null, null, null, listListener);
+
+    }
+
+    public static <T> HttpBuilder request(@NonNull final Class<T> clazz, @Nullable final HttpActionDataListener<T> dataListener) {
+        return request(clazz, HttpType.POST, null, null, null, null, true, null, null, dataListener, null);
+    }
+
+    public static <T> HttpBuilder request(@NonNull final Class<T> clazz, @Nullable HttpType httpType, @Nullable String url,
                                           @Nullable HashMap<String, String> map, @Nullable HashMap<String, Object> datas, @Nullable HashMap<String, String> header, boolean isCookie,
                                           @Nullable CacheControl cacheControl, @Nullable final HttpDataAction dataAction,
                                           @Nullable final HttpActionDataListener<T> dataListener,

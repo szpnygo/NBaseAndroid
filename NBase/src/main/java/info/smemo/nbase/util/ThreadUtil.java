@@ -66,6 +66,23 @@ public class ThreadUtil {
 
     }
 
+    public static void newThreadMain(final ThreadRunnableMain runnableMain) {
+        Observable.just("newx").subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        runnableMain.inMain();
+                    }
+                }).subscribe();
+    }
+
+    public interface ThreadRunnableMain {
+
+        void inMain();
+
+    }
+
 
     public interface ThreadRunnableVoid {
 

@@ -3,6 +3,9 @@ package info.smemo.nbase.http;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.exceptions.Exceptions;
@@ -33,13 +37,24 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by neo on 16/6/8.
+ * Created by neo on 16/6/17.
  */
 public class HttpUtil implements AppConstant {
 
     public static OkHttpClient client = getClient();
 
     public static MediaType MEDIA_TYPE = MediaType.parse("multipart/form-data");
+
+    public enum HttpType {
+        POST,
+        GET,
+    }
+
+    public enum ThreadType {
+        IO,
+        THREAD,
+        MAIN
+    }
 
     private static OkHttpClient getClient() {
         if (client != null) {
@@ -55,152 +70,77 @@ public class HttpUtil implements AppConstant {
         return builder.build();
     }
 
-    /**
-     * GET请求
-     *
-     * @param url      请求地址
-     * @param map      数据
-     * @param isCookie 是否开启Cookie
-     * @param listener 回调
-     */
-    public static void get(@NonNull final String url, @Nullable final HashMap<String, String> map, @NonNull final boolean isCookie, @Nullable final CacheControl cacheControl, @NonNull final HttpResponseListener listener) {
-        Observable.create(new Observable.OnSubscribe<Request>() {
-
-            @Override
-            public void call(Subscriber<? super Request> subscriber) {
-                //url can't be empty
-                if (StringUtil.isEmpty(url)) {
-                    listener.failure("Http url is empty");
-                    return;
-                }
-                //get http url and check
-                HttpUrl requestUrl = HttpUrl.parse(url);
-                if (null == requestUrl) {
-                    listener.failure("HttpUrl[" + url + "] has error");
-                    return;
-                }
-                LogHelper.i(TAG_HTTP, "network:Get Http Request Url:" + url);
-
-                //make http url query parameter
-                HttpUrl.Builder builder = requestUrl.newBuilder();
-                if (null != map) {
-                    Set<Map.Entry<String, String>> entrySet = map.entrySet();
-                    for (Map.Entry<String, String> entry : entrySet) {
-                        builder.addQueryParameter(entry.getKey(), entry.getValue());
-                    }
-                }
-
-                HttpUrl httpUrl = builder.build();
-                Request.Builder requestBuilder = new Request.Builder().url(httpUrl);
-
-                //make cache control
-                if (null != cacheControl)
-                    requestBuilder.cacheControl(cacheControl);
-                Request request = requestBuilder.build();
-
-                //make request cookie
-                if (!isCookie) {
-                    NCookieManager.getInstance().deleteCookie(httpUrl);
-                }
-                subscriber.onNext(request);
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .map(new Func1<Request, Response>() {
-                    @Override
-                    public Response call(Request request) {
-                        Response response;
-                        try {
-                            response = client.newCall(request).execute();
-                            return response;
-                        } catch (Exception e) {
-                            throw Exceptions.propagate(e);
-                        }
-                    }
-                })
-                .onErrorReturn(new Func1<Throwable, Response>() {
-
-                    @Override
-                    public Response call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        listener.failure(throwable.getMessage());
-                        return null;
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Action1<Response>() {
-
-                    @Override
-                    public void call(Response response) {
-                        if (response != null) {
-                            try {
-                                listener.success(response.body().string());
-                            } catch (IOException e) {
-                                throw Exceptions.propagate(e);
-                            }
-                        }
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted(new Action0() {
-                    @Override
-                    public void call() {
-                        LogHelper.i(TAG_HTTP, "Http Get Request[" + url + "] Completed");
-                    }
-                })
-                .doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        listener.failure(throwable.getMessage());
-                    }
-                })
-                .subscribe();
+    public static void request(HttpBuilder builder) {
+        request(builder.httpType, builder.url, builder.postMap, builder.getMap, builder.headerMap,
+                builder.isCookie, builder.cacheControl, builder.returnThread, builder.httpDataAction == null ? defaultGetData : builder.httpDataAction,
+                builder.listener);
     }
 
     /**
-     * POST 请求
+     * 网络请求
      *
-     * @param url          请求地址
-     * @param map          数据
-     * @param headers      header头
-     * @param isCookie     是否开启cookie
-     * @param cacheControl 缓存控制
-     * @param listener     监听
+     * @param type         类型
+     * @param url          地址
+     * @param postMap      post数据
+     * @param getMap       get数据
+     * @param headerMap    header数据
+     * @param isCookie     是否cookie
+     * @param cacheControl 缓存管理
+     * @param returnThread 回调线程 主线程
+     * @param listener     回调
      */
-    public static void post(@NonNull final String url, @Nullable final HashMap<String, Object> map, @Nullable final HashMap<String, String> headers, @NonNull final boolean isCookie, @Nullable final CacheControl cacheControl, @NonNull final HttpResponseListener listener) {
-        Observable.create(new Observable.OnSubscribe<Request>() {
+    public static void request(final @NonNull HttpType type, final @NonNull String url, final @Nullable HashMap<String, Object> postMap,
+                               final @Nullable HashMap<String, String> getMap, final @Nullable HashMap<String, String> headerMap,
+                               final boolean isCookie, final @Nullable CacheControl cacheControl,
+                               final @NonNull ThreadType returnThread,
+                               final @NonNull HttpDataAction httpDataAction,
+                               final @NonNull HttpDataListener listener) {
+        request(type, url, postMap, getMap, headerMap, isCookie, cacheControl, returnThread, new HttpResponseListener() {
+            @Override
+            public void success(@NonNull final String response) {
+                if (StringUtil.isEmpty(response)) {
+                    listener.error(ERROR_DATA_EMPTY_ERROR, "没有返回内容");
+                    return;
+                }
+                httpDataAction.getData(response, listener);
+            }
 
             @Override
+            public void failure(String message) {
+                listener.error(ERROR_NETWORK_ERROR, message);
+            }
+        });
+    }
+
+
+    /**
+     * 网络请求
+     *
+     * @param type         请求类型
+     * @param url          请求地址
+     * @param postMap      post数据
+     * @param getMap       get数据
+     * @param headerMap    header数据
+     * @param isCookie     是否cookie
+     * @param cacheControl 缓存管理
+     * @param returnThread 回调线程 主线程
+     * @param listener     回调
+     */
+    public static void request(final @NonNull HttpType type, final @NonNull String url, final @Nullable HashMap<String, Object> postMap,
+                               final @Nullable HashMap<String, String> getMap, final @Nullable HashMap<String, String> headerMap,
+                               final boolean isCookie, final @Nullable CacheControl cacheControl,
+                               final @NonNull ThreadType returnThread,
+                               final @NonNull HttpResponseListener listener) {
+        Observable.create(new Observable.OnSubscribe<Request>() {
+            @Override
             public void call(Subscriber<? super Request> subscriber) {
-                if (StringUtil.isEmpty(url)) {
-                    throw Exceptions.propagate(new Throwable("Http url is empty"));
-                }
-                HttpUrl requestUrl = HttpUrl.parse(url);
-                if (null == requestUrl) {
+                HttpUrl httpUrl = HttpUrl.parse(url);
+                if (null == httpUrl) {
                     throw Exceptions.propagate(new Throwable("HttpUrl[" + url + "] has error"));
                 }
-                LogHelper.i(TAG_HTTP, "network:Post Http Request Url:" + url);
-
-                if (!isCookie) {
-                    NCookieManager.getInstance().deleteCookie(HttpUrl.parse(url));
-                }
-
-                Request.Builder builder = new Request.Builder();
-                builder.url(requestUrl).post(createRequestBody(map));
-
-                //make post header
-                if (null != headers) {
-                    Set<Map.Entry<String, String>> entrySet = headers.entrySet();
-                    for (Map.Entry<String, String> entry : entrySet) {
-                        builder.addHeader(entry.getKey(), entry.getValue());
-                    }
-                }
-                if (null != cacheControl)
-                    builder.cacheControl(cacheControl);
-
-                subscriber.onNext(builder.build());
+                LogHelper.i(TAG_HTTP, "Http Request url:" + url);
+                Request request = getRequest(type, httpUrl, postMap, getMap, headerMap, isCookie, cacheControl);
+                subscriber.onNext(request);
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
@@ -208,7 +148,6 @@ public class HttpUtil implements AppConstant {
                 .map(new Func1<Request, String>() {
                     @Override
                     public String call(Request request) {
-                        //do request
                         Response response;
                         try {
                             response = client.newCall(request).execute();
@@ -219,46 +158,140 @@ public class HttpUtil implements AppConstant {
                                 throw Exceptions.propagate(new Throwable("response is not successful code :" + response.code()));
                             }
                             return response.body().string();
-                        } catch (Exception e) {
+                        } catch (IOException e) {
                             throw Exceptions.propagate(e);
                         }
+
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(getThread(ThreadType.MAIN))
                 .onErrorReturn(new Func1<Throwable, String>() {
-
                     @Override
                     public String call(Throwable throwable) {
                         throwable.printStackTrace();
                         listener.failure(throwable.getMessage());
-                        return null;
+                        return "NBaseAndroidError:" + throwable.getMessage();
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(getThread(returnThread))
                 .doOnNext(new Action1<String>() {
-
                     @Override
                     public void call(String response) {
-                        listener.success(response);
+                        if (!response.startsWith("NBaseAndroidError:")) {
+                            LogHelper.i(TAG_HTTP, "Http Request[" + url + "] Response:" + response);
+                            listener.success(response);
+                        }
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnCompleted(new Action0() {
                     @Override
                     public void call() {
-                        LogHelper.i(TAG_HTTP, "Http Post Request[" + url + "] Completed");
                     }
                 })
                 .doOnError(new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        listener.failure(throwable.getMessage());
+                        throw Exceptions.propagate(throwable);
                     }
                 })
                 .subscribe();
     }
 
+    /**
+     * 生成request
+     *
+     * @param type         请求类型
+     * @param httpUrl      请求地址
+     * @param postMap      post提示教书
+     * @param getMap       get提交数据
+     * @param headerMap    header数据
+     * @param isCookie     是否使用cookie
+     * @param cacheControl 缓存控制
+     * @return
+     */
+    private static Request getRequest(@NonNull HttpType type, @NonNull HttpUrl httpUrl, @Nullable HashMap<String, Object> postMap,
+                                      @Nullable HashMap<String, String> getMap, @Nullable HashMap<String, String> headerMap,
+                                      @NonNull boolean isCookie, @Nullable CacheControl cacheControl) {
+        //control cookie
+        if (!isCookie)
+            NCookieManager.getInstance().deleteCookie(httpUrl);
+
+        HttpUrl.Builder httpBuilder = httpUrl.newBuilder();
+
+        //add query parameter
+        if (null != getMap) {
+            Set<Map.Entry<String, String>> entrySet = getMap.entrySet();
+            for (Map.Entry<String, String> entry : entrySet) {
+                httpBuilder.addQueryParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        Request.Builder builder = new Request.Builder().url(httpUrl);
+        //add header
+        if (null != headerMap) {
+            Set<Map.Entry<String, String>> entrySet = headerMap.entrySet();
+            for (Map.Entry<String, String> entry : entrySet) {
+                builder.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        //add post
+        if (type == HttpType.POST) {
+            builder.post(createRequestBody(postMap));
+        }
+
+        if (null != cacheControl)
+            builder.cacheControl(cacheControl);
+
+        return builder.build();
+    }
+
+    /**
+     * 默认数据解析
+     */
+    public static HttpUtil.HttpDataAction defaultGetData = new HttpUtil.HttpDataAction() {
+
+        @Override
+        public void getData(String response, HttpUtil.HttpDataListener listener) {
+            try {
+                JSONObject object = new JSONObject(response);
+                int code = object.getInt("code");
+                if (code == 0) {
+                    listener.success(response);
+                } else {
+                    listener.error(code, object.getString("message"));
+                }
+            } catch (JSONException e) {
+                listener.error(ERROR_DATA_ERROR, e.getMessage());
+            }
+        }
+    };
+
+
+    /**
+     * 返回线程类型
+     *
+     * @param type
+     * @return
+     */
+    private static Scheduler getThread(ThreadType type) {
+        switch (type) {
+            case IO:
+                return Schedulers.io();
+            case THREAD:
+                return Schedulers.newThread();
+            case MAIN:
+                return AndroidSchedulers.mainThread();
+            default:
+                return AndroidSchedulers.mainThread();
+        }
+    }
+
+    /**
+     * 生成请求数据体
+     *
+     * @param map
+     * @return
+     */
     public static RequestBody createRequestBody(@Nullable HashMap<String, Object> map) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
@@ -271,10 +304,17 @@ public class HttpUtil implements AppConstant {
                     builder.addFormDataPart(entry.getKey(), (String) object);
                 } else if (object instanceof File) {
                     builder.addFormDataPart(entry.getKey(), entry.getKey(), RequestBody.create(MEDIA_TYPE, (File) object));
+                } else if (object instanceof Integer || object instanceof Long || object instanceof Double || object instanceof Float) {
+                    builder.addFormDataPart(entry.getKey(), String.valueOf(object));
                 }
             }
         }
         return builder.build();
+    }
+
+
+    public static HttpBuilder newBuilder() {
+        return new HttpBuilder();
     }
 
     public interface HttpResponseListener extends BaseHttpListener {
@@ -282,6 +322,20 @@ public class HttpUtil implements AppConstant {
         void success(@NonNull String response);
 
         void failure(String message);
+
+    }
+
+    public interface HttpDataAction {
+
+        void getData(String response, HttpDataListener listener);
+
+    }
+
+    public interface HttpDataListener {
+
+        void success(String response);
+
+        void error(int code, String message);
 
     }
 

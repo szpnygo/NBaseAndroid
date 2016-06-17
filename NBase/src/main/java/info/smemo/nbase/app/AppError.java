@@ -7,6 +7,7 @@ public interface AppError {
 
     int ERROR_NETWORK_ERROR = 100001;
     int ERROR_DATA_ERROR = 100002;
+    int ERROR_DATA_EMPTY_ERROR = 100003;
 
 
 }

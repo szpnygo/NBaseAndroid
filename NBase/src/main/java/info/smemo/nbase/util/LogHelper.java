@@ -30,7 +30,7 @@ public class LogHelper implements AppConstant {
     public static void d(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.d(tag, message);
+        Log.d(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
     }
 
     public static void i(String tag, Class cls, String message) {
@@ -48,7 +48,7 @@ public class LogHelper implements AppConstant {
     public static void i(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.i(tag, message);
+        Log.i(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
     }
 
     public static void w(String tag, Class cls, String message) {
@@ -66,7 +66,7 @@ public class LogHelper implements AppConstant {
     public static void w(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.w(tag, message);
+        Log.w(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
     }
 
     public static void e(String tag, Class cls, String message) {
@@ -84,7 +84,7 @@ public class LogHelper implements AppConstant {
     public static void e(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.e(tag, message);
+        Log.e(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
         saveLog(" [ " + TimeUtil.getTime() + " ] " + message);
     }
 

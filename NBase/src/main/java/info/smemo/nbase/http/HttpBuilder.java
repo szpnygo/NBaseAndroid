@@ -1,6 +1,8 @@
 package info.smemo.nbase.http;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import info.smemo.nbase.app.AppConstant;
 import info.smemo.nbase.util.StringUtil;
@@ -47,16 +49,37 @@ public class HttpBuilder implements AppConstant {
     }
 
     public HttpBuilder setPostMap(HashMap<String, Object> postMap) {
+        if (this.postMap != null) {
+            Set<Map.Entry<String, Object>> entrySet = postMap.entrySet();
+            for (Map.Entry<String, Object> entry : entrySet) {
+                this.postMap.put(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
         this.postMap = postMap;
         return this;
     }
 
     public HttpBuilder setGetMap(HashMap<String, String> getMap) {
+        if (this.getMap != null) {
+            Set<Map.Entry<String, String>> entrySet = getMap.entrySet();
+            for (Map.Entry<String, String> entry : entrySet) {
+                this.getMap.put(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
         this.getMap = getMap;
         return this;
     }
 
     public HttpBuilder setHeaderMap(HashMap<String, String> headerMap) {
+        if (this.headerMap != null) {
+            Set<Map.Entry<String, String>> entrySet = headerMap.entrySet();
+            for (Map.Entry<String, String> entry : entrySet) {
+                this.headerMap.put(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
         this.headerMap = headerMap;
         return this;
     }
@@ -81,12 +104,12 @@ public class HttpBuilder implements AppConstant {
         return this;
     }
 
-    public void request(HttpUtil.HttpDataListener listener) {
+    public void execute(HttpUtil.HttpDataListener listener) {
         this.setListener(listener);
         doRequest();
     }
 
-    public void request() {
+    public void execute() {
         doRequest();
     }
 
@@ -98,5 +121,34 @@ public class HttpBuilder implements AppConstant {
         HttpUtil.request(this);
     }
 
+
+    public HttpBuilder addHeader(String key, String value) {
+        if (this.headerMap == null)
+            this.headerMap = new HashMap<>();
+        this.headerMap.put(key, value);
+        return this;
+    }
+
+    public HttpBuilder addQuery(String key, String value) {
+        if (this.getMap == null)
+            this.getMap = new HashMap<>();
+        this.getMap.put(key, value);
+        return this;
+    }
+
+    public HttpBuilder addPost(String key, Object object) {
+        if (this.postMap == null)
+            this.postMap = new HashMap<>();
+        this.postMap.put(key, object);
+        return this;
+    }
+
+    public HttpBuilder addCookies(String key, String value) {
+        if (this.headerMap == null)
+            this.headerMap = new HashMap<>();
+        String cookie = StringUtil.isEmpty(this.headerMap.get("Cookie")) ? "" : this.headerMap.get("Cookie");
+        this.headerMap.put("Cookie", cookie + key + ":" + value + ";");
+        return this;
+    }
 
 }

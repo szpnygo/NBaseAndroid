@@ -136,10 +136,10 @@ public class HttpUtil implements AppConstant {
             public void call(Subscriber<? super Request> subscriber) {
                 HttpUrl httpUrl = HttpUrl.parse(url);
                 if (null == httpUrl) {
-                    throw Exceptions.propagate(new Throwable("HttpUrl[" + url + "] has error"));
+                    throw Exceptions.propagate(new Throwable("HttpUrl[" + (type == HttpType.POST ? "POST" : "GET") + "][" + url + "] has error"));
                 }
-                LogHelper.i(TAG_HTTP, "Http Request url:" + url);
                 Request request = getRequest(type, httpUrl, postMap, getMap, headerMap, isCookie, cacheControl);
+                LogHelper.i(TAG_HTTP, "Http[" + (type == HttpType.POST ? "POST" : "GET") + "] Request url:" + request.url());
                 subscriber.onNext(request);
                 subscriber.onCompleted();
             }
@@ -226,7 +226,7 @@ public class HttpUtil implements AppConstant {
             }
         }
 
-        Request.Builder builder = new Request.Builder().url(httpUrl);
+        Request.Builder builder = new Request.Builder().url(httpBuilder.build());
         //add header
         if (null != headerMap) {
             Set<Map.Entry<String, String>> entrySet = headerMap.entrySet();

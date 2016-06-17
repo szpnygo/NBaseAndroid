@@ -21,91 +21,45 @@ import okhttp3.CacheControl;
  * Created by neo on 16/6/17.
  */
 public class NBaseAction extends HttpUtil {
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        get(clazz, url, null, null, true, null, null, dataListener);
+    public static <T> HttpBuilder get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HttpActionDataListener<T> dataListener) {
+        return request(clazz, HttpType.GET, url, null, null, null, true, null, null, dataListener, null);
     }
 
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        get(clazz, url, null, null, true, null, null, listListener);
+    public static <T> HttpBuilder get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HttpActionListListener<List<T>> listListener) {
+        return request(clazz, HttpType.GET, url, null, null, null, true, null, null, null, listListener);
     }
 
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        get(clazz, url, map, null, true, null, null, dataListener);
+    public static <T> HttpBuilder get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map,
+                                      @Nullable HttpActionDataListener<T> dataListener) {
+        return request(clazz, HttpType.GET, url, map, null, null, true, null, null, dataListener, null);
     }
 
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        get(clazz, url, map, null, true, null, null, listListener);
+    public static <T> HttpBuilder get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map,
+                                      @Nullable HttpActionListListener<List<T>> listListener) {
+        return request(clazz, HttpType.GET, url, map, null, null, true, null, null, null, listListener);
     }
 
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable final HttpDataAction dataAction,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        get(clazz, url, map, null, true, null, dataAction, dataListener);
+    public static <T> HttpBuilder post(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, Object> map,
+                                       @Nullable HttpActionDataListener<T> dataListener) {
+        return request(clazz, HttpType.POST, url, null, map, null, true, null, null, dataListener, null);
     }
 
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable final HttpDataAction dataAction,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        get(clazz, url, map, null, true, null, dataAction, listListener);
+    public static <T> HttpBuilder post(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, Object> map,
+                                       @Nullable HttpActionListListener<List<T>> listListener) {
+        return request(clazz, HttpType.POST, url, null, map, null, true, null, null, null, listListener);
     }
 
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        get(clazz, url, map, header, true, null, dataAction, dataListener);
-    }
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        get(clazz, url, map, header, true, null, dataAction, listListener);
-    }
-
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header, @Nullable boolean isCookie,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        get(clazz, url, map, header, isCookie, null, dataAction, dataListener);
-    }
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header, @Nullable boolean isCookie,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        get(clazz, url, map, header, isCookie, null, dataAction, listListener);
-    }
-
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header, @Nullable boolean isCookie, @Nullable CacheControl cacheControl,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionDataListener<T> dataListener) {
-        request(clazz, HttpType.GET, url, map, null, header, isCookie, cacheControl, dataAction, dataListener, null);
-    }
-
-    public static <T> void get(@NonNull Class<T> clazz, @NonNull String url, @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> header, @Nullable boolean isCookie, @Nullable CacheControl cacheControl,
-                               @Nullable HttpDataAction dataAction,
-                               @Nullable HttpActionListListener<List<T>> listListener) {
-        request(clazz, HttpType.GET, url, map, null, header, isCookie, cacheControl, dataAction, null, listListener);
-    }
-
-
-    public static <T> void request(@NonNull final Class<T> clazz, @NonNull HttpType httpType, @NonNull String url,
-                                   @Nullable HashMap<String, String> map, @Nullable HashMap<String, String> datas, @Nullable HashMap<String, String> header, @Nullable boolean isCookie,
-                                   @Nullable CacheControl cacheControl, @Nullable final HttpDataAction dataAction,
-                                   @Nullable final HttpActionDataListener<T> dataListener,
-                                   @Nullable final HttpActionListListener<List<T>> listListener) {
+    public static <T> HttpBuilder request(@NonNull final Class<T> clazz, @NonNull HttpType httpType, @NonNull String url,
+                                          @Nullable HashMap<String, String> map, @Nullable HashMap<String, Object> datas, @Nullable HashMap<String, String> header, boolean isCookie,
+                                          @Nullable CacheControl cacheControl, @Nullable final HttpDataAction dataAction,
+                                          @Nullable final HttpActionDataListener<T> dataListener,
+                                          @Nullable final HttpActionListListener<List<T>> listListener) {
         HttpBuilder builder = HttpUtil.newBuilder();
         builder.setHttpType(httpType)
                 .setUrl(url)
                 .setHeaderMap(header)
                 .setGetMap(map)
-                .setGetMap(datas)
+                .setPostMap(datas)
                 .setCookie(isCookie)
                 .setCacheControl(cacheControl)
                 .setHttpDataAction(dataAction)
@@ -145,7 +99,44 @@ public class NBaseAction extends HttpUtil {
                         if (null != dataListener) dataListener.error(code, message, true);
                         if (null != listListener) listListener.error(code, message, true);
                     }
-                }).request();
+                });
+        return builder;
+    }
+
+
+    public static HttpBuilder get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull final HttpActionStringListener listener) {
+        return request(HttpType.GET, url, map, null, null, true, null, null, listener);
+    }
+
+    public static HttpBuilder post(@NonNull String url, @Nullable HashMap<String, Object> map, @NonNull final HttpActionStringListener listener) {
+        return request(HttpType.POST, url, null, map, null, true, null, null, listener);
+    }
+
+    public static HttpBuilder request(@NonNull HttpType httpType, @NonNull String url,
+                                      @Nullable HashMap<String, String> map, @Nullable HashMap<String, Object> datas, @Nullable HashMap<String, String> header, boolean isCookie,
+                                      @Nullable CacheControl cacheControl, @Nullable final HttpDataAction dataAction,
+                                      @NonNull final HttpActionStringListener listener) {
+        HttpBuilder builder = HttpUtil.newBuilder();
+        builder.setHttpType(httpType)
+                .setUrl(url)
+                .setHeaderMap(header)
+                .setGetMap(map)
+                .setPostMap(datas)
+                .setCookie(isCookie)
+                .setCacheControl(cacheControl)
+                .setHttpDataAction(dataAction)
+                .setListener(new HttpDataListener() {
+                    @Override
+                    public void success(String response) {
+                        listener.success(response);
+                    }
+
+                    @Override
+                    public void error(int code, String message) {
+                        listener.error(code, message, true);
+                    }
+                });
+        return builder;
     }
 
     public static <T> T fromJson(String json, Class clazz) {
@@ -186,6 +177,13 @@ public class NBaseAction extends HttpUtil {
 
     public interface HttpActionListListener<T> {
         void success(T response);
+
+        //UI线程
+        void error(int code, String message, boolean inMain);
+    }
+
+    public interface HttpActionStringListener {
+        void success(String response);
 
         //UI线程
         void error(int code, String message, boolean inMain);

@@ -3,7 +3,6 @@ package info.smemo.nbase.base;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import info.smemo.nbase.bean.CommonJsonList;
 import info.smemo.nbase.http.HttpUtil;
 import info.smemo.nbase.util.StringUtil;
 import okhttp3.CacheControl;
-import okhttp3.Response;
 
 /**
  * Created by neo on 16/6/14.
@@ -35,24 +33,17 @@ public class NEasyAction extends NBaseAction {
                                @NonNull final HttpResponseListener<T> listener) {
         HttpUtil.get(url, map, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 try {
-                    if (!response.isSuccessful()) {
-                        listener.error(response.code(), response.toString());
+                    if (StringUtil.isEmpty(response)) {
+                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http");
                         return;
                     }
 
-                    String bodyStr = response.body().string();
-                    if (StringUtil.isEmpty(bodyStr)) {
-                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
-                        return;
-
-                    }
-
-                    CommonJson<T> commonJson = fromJson(bodyStr, clazz);
+                    CommonJson<T> commonJson = fromJson(response, clazz);
                     listener.success(commonJson.data);
 
-                } catch (IOException e) {
+                } catch (Exception e){
                     listener.error(ERROR_DATA_ERROR, e.getMessage());
                     e.printStackTrace();
                 }
@@ -81,24 +72,17 @@ public class NEasyAction extends NBaseAction {
                                    @NonNull final HttpResponseListener<List<T>> listener) {
         HttpUtil.get(url, map, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 try {
-                    if (!response.isSuccessful()) {
-                        listener.error(response.code(), response.toString());
+                    if (StringUtil.isEmpty(response)) {
+                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http");
                         return;
                     }
 
-                    String bodyStr = response.body().string();
-                    if (StringUtil.isEmpty(bodyStr)) {
-                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
-                        return;
-
-                    }
-
-                    CommonJsonList<T> commonJson = fromJsonList(bodyStr, clazz);
+                    CommonJsonList<T> commonJson = fromJsonList(response, clazz);
                     listener.success(commonJson.data);
 
-                } catch (IOException e) {
+                } catch (Exception e){
                     listener.error(ERROR_DATA_ERROR, e.getMessage());
                     e.printStackTrace();
                 }
@@ -127,24 +111,17 @@ public class NEasyAction extends NBaseAction {
     public static <T> void post(@NonNull final Class clazz, @NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpResponseListener<T> listener) {
         HttpUtil.post(url, map, headers, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 try {
-                    if (!response.isSuccessful()) {
-                        listener.error(response.code(), response.toString());
+                    if (StringUtil.isEmpty(response)) {
+                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http");
                         return;
                     }
 
-                    String bodyStr = response.body().string();
-                    if (StringUtil.isEmpty(bodyStr)) {
-                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
-                        return;
-
-                    }
-
-                    CommonJson<T> commonJson = fromJson(bodyStr, clazz);
+                    CommonJson<T> commonJson = fromJson(response, clazz);
                     listener.success(commonJson.data);
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     listener.error(ERROR_DATA_ERROR, e.getMessage());
                     e.printStackTrace();
                 }
@@ -169,27 +146,20 @@ public class NEasyAction extends NBaseAction {
         postList(clazz, url, map, headers, true, null, listener);
     }
 
-    public static <T> void postList(@NonNull final Class clazz, @NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpResponseListener<List<T>> listener) {
+    public static <T> void postList(@NonNull final Class clazz, @NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable final CacheControl cacheControl, @NonNull final HttpResponseListener<List<T>> listener) {
         HttpUtil.post(url, map, headers, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 try {
-                    if (!response.isSuccessful()) {
-                        listener.error(response.code(), response.toString());
+                    if (StringUtil.isEmpty(response)) {
+                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http");
                         return;
                     }
 
-                    String bodyStr = response.body().string();
-                    if (StringUtil.isEmpty(bodyStr)) {
-                        listener.error(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
-                        return;
-
-                    }
-
-                    CommonJsonList<T> commonJson = fromJsonList(bodyStr, clazz);
+                    CommonJsonList<T> commonJson = fromJsonList(response, clazz);
                     listener.success(commonJson.data);
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     listener.error(ERROR_DATA_ERROR, e.getMessage());
                     e.printStackTrace();
                 }

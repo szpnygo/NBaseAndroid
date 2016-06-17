@@ -8,8 +8,8 @@ import java.io.Serializable;
 public class FundBean implements Serializable{
 
     public String id;
-    public String fund_time;
-    public String data_time;
-    public String company;
+    public String title;
+    public String type;
+    public String img;
 
 }

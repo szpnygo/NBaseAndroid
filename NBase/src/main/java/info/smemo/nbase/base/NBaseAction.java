@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import info.smemo.nbase.bean.CommonJsonList;
 import info.smemo.nbase.http.HttpUtil;
 import info.smemo.nbase.util.StringUtil;
 import okhttp3.CacheControl;
-import okhttp3.Response;
 
 /**
  * Created by neo on 16/6/12.
@@ -45,7 +43,7 @@ public class NBaseAction implements AppConstant {
     public static void get(@NonNull String url, @Nullable HashMap<String, String> map, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpActionListener listener, final ParseDataAction action) {
         HttpUtil.get(url, map, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 action.parse(response, listener);
             }
 
@@ -75,7 +73,7 @@ public class NBaseAction implements AppConstant {
     public static void post(@NonNull String url, @Nullable HashMap<String, Object> map, @Nullable HashMap<String, String> headers, @NonNull boolean isCookie, @Nullable CacheControl cacheControl, @NonNull final HttpActionListener listener, final ParseDataAction action) {
         HttpUtil.post(url, map, headers, isCookie, cacheControl, new HttpUtil.HttpResponseListener() {
             @Override
-            public void success(@NonNull Response response) {
+            public void success(@NonNull String response) {
                 action.parse(response, listener);
             }
 
@@ -90,28 +88,21 @@ public class NBaseAction implements AppConstant {
     private static ParseDataAction defaultAction = new ParseDataAction() {
 
         @Override
-        public void parse(@NonNull Response response, @NonNull HttpActionListener listener) {
+        public void parse(@NonNull String response, @NonNull HttpActionListener listener) {
             try {
-                if (!response.isSuccessful()) {
-                    listener.error(response.code(), response.toString());
+                if (StringUtil.isEmpty(response)) {
+                    listener.error(ERROR_DATA_ERROR, "Response Body is empty Http");
                     return;
                 }
-                String bodyStr = response.body().string();
-                if (StringUtil.isEmpty(bodyStr)) {
-                    listener.failure(ERROR_DATA_ERROR, "Response Body is empty Http code:" + response.code());
-                    return;
-                }
-                JSONObject object = new JSONObject(bodyStr);
+
+                JSONObject object = new JSONObject(response);
                 int code = object.getInt("code");
                 if (code == 0) {
-                    listener.success(response, bodyStr);
+                    listener.success(response);
                 } else {
                     listener.error(code, object.getString("message"));
                 }
             } catch (JSONException e) {
-                listener.failure(ERROR_DATA_ERROR, e.getMessage());
-                e.printStackTrace();
-            } catch (IOException e) {
                 listener.failure(ERROR_DATA_ERROR, e.getMessage());
                 e.printStackTrace();
             }
@@ -146,9 +137,9 @@ public class NBaseAction implements AppConstant {
         };
     }
 
-    public interface HttpActionListener {
+    public interface HttpActionListener extends HttpUtil.BaseHttpListener {
 
-        void success(@NonNull Response response, @Nullable String body);
+        void success(@Nullable String body);
 
         void error(int code, String message);
 
@@ -158,11 +149,11 @@ public class NBaseAction implements AppConstant {
 
     public interface ParseDataAction {
 
-        void parse(@NonNull Response response, @NonNull HttpActionListener listener);
+        void parse(@NonNull String response, @NonNull HttpActionListener listener);
 
     }
 
-    public interface HttpResponseListener<T> {
+    public interface HttpResponseListener<T> extends HttpUtil.BaseHttpListener {
 
         void success(T t);
 

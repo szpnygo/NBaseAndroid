@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -132,8 +133,13 @@ public class HttpUtil implements AppConstant {
 
                     @Override
                     public void call(Response response) {
-                        if (response != null)
-                            listener.success(response);
+                        if (response != null) {
+                            try {
+                                listener.success(response.body().string());
+                            } catch (IOException e) {
+                                throw Exceptions.propagate(e);
+                            }
+                        }
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,16 +174,12 @@ public class HttpUtil implements AppConstant {
 
             @Override
             public void call(Subscriber<? super Request> subscriber) {
-                //url can't be empty
                 if (StringUtil.isEmpty(url)) {
-                    listener.failure("Http url is empty");
-                    return;
+                    throw Exceptions.propagate(new Throwable("Http url is empty"));
                 }
-                //get http url and check
                 HttpUrl requestUrl = HttpUrl.parse(url);
                 if (null == requestUrl) {
-                    listener.failure("HttpUrl[" + url + "] has error");
-                    return;
+                    throw Exceptions.propagate(new Throwable("HttpUrl[" + url + "] has error"));
                 }
                 LogHelper.i(TAG_HTTP, "network:Post Http Request Url:" + url);
 
@@ -203,35 +205,41 @@ public class HttpUtil implements AppConstant {
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(new Func1<Request, Response>() {
+                .map(new Func1<Request, String>() {
                     @Override
-                    public Response call(Request request) {
+                    public String call(Request request) {
                         //do request
                         Response response;
                         try {
                             response = client.newCall(request).execute();
-                            return response;
+                            if (response == null) {
+                                throw Exceptions.propagate(new Throwable("response is null"));
+                            }
+                            if (!response.isSuccessful()) {
+                                throw Exceptions.propagate(new Throwable("response is not successful code :" + response.code()));
+                            }
+                            return response.body().string();
                         } catch (Exception e) {
                             throw Exceptions.propagate(e);
                         }
                     }
                 })
-                .onErrorReturn(new Func1<Throwable, Response>() {
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(new Func1<Throwable, String>() {
 
                     @Override
-                    public Response call(Throwable throwable) {
+                    public String call(Throwable throwable) {
                         throwable.printStackTrace();
                         listener.failure(throwable.getMessage());
                         return null;
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Action1<Response>() {
+                .doOnNext(new Action1<String>() {
 
                     @Override
-                    public void call(Response response) {
-                        if (response != null)
-                            listener.success(response);
+                    public void call(String response) {
+                        listener.success(response);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -269,11 +277,15 @@ public class HttpUtil implements AppConstant {
         return builder.build();
     }
 
-    public interface HttpResponseListener {
+    public interface HttpResponseListener extends BaseHttpListener {
 
-        void success(@NonNull Response response);
+        void success(@NonNull String response);
 
         void failure(String message);
+
+    }
+
+    public interface BaseHttpListener {
 
     }
 

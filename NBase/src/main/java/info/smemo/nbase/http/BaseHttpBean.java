@@ -120,11 +120,13 @@ public class BaseHttpBean implements AppConstant {
         if (postTarget != null) {
             HTTP_URL = postTarget.value();
             HTTP_TYPE = HTTP_POST;
+            return;
         }
         HttpGetTarget getTarget = clazz.getAnnotation(HttpGetTarget.class);
         if (getTarget != null) {
             HTTP_URL = getTarget.value();
             HTTP_TYPE = HTTP_GET;
+            return;
         }
         HTTP_TYPE = HTTP_ERROR;
     }

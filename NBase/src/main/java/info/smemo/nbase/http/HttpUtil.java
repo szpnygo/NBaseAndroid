@@ -3,6 +3,8 @@ package info.smemo.nbase.http;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orhanobut.logger.Logger;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -140,7 +142,7 @@ public class HttpUtil implements AppConstant {
                     throw Exceptions.propagate(new Throwable("HttpUrl[" + (type == HttpType.POST ? "POST" : "GET") + "][" + url + "] has error"));
                 }
                 Request request = getRequest(type, httpUrl, postMap, getMap, headerMap, isCookie, cacheControl);
-                LogHelper.i(TAG_HTTP, "Http[" + (type == HttpType.POST ? "POST" : "GET") + "] Request url:" + request.url());
+                LogHelper.i(TAG_HTTP, "Http[" + (type == HttpType.POST ? "POST" : "GET") + "] Request url[" + request.url() + "]");
                 subscriber.onNext(request);
                 subscriber.onCompleted();
             }
@@ -179,7 +181,7 @@ public class HttpUtil implements AppConstant {
                     @Override
                     public void call(String response) {
                         if (!response.startsWith("NBaseAndroidError:")) {
-                            LogHelper.i(TAG_HTTP, "Http Request[" + url + "] Response:" + response);
+                            LogHelper.i(TAG_HTTP, "Http Request[" + url + "] doOnCompleted");
                             listener.success(response);
                         }
                     }
@@ -255,6 +257,7 @@ public class HttpUtil implements AppConstant {
         public void getData(String response, HttpUtil.HttpDataListener listener) {
             try {
                 JSONObject object = new JSONObject(response);
+                Logger.json(response);
                 int code = object.getInt("code");
                 if (code == 0) {
                     listener.success(response);

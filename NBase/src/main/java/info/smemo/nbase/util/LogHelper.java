@@ -2,6 +2,8 @@ package info.smemo.nbase.util;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
@@ -48,7 +50,7 @@ public class LogHelper implements AppConstant {
     public static void i(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.i(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
+        Logger.i(message);
     }
 
     public static void w(String tag, Class cls, String message) {
@@ -66,7 +68,7 @@ public class LogHelper implements AppConstant {
     public static void w(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.w(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
+        Logger.w(message);
     }
 
     public static void e(String tag, Class cls, String message) {
@@ -84,7 +86,7 @@ public class LogHelper implements AppConstant {
     public static void e(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.e(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
+        Logger.e(message);
         saveLog(" [ " + TimeUtil.getTime() + " ] " + message);
     }
 

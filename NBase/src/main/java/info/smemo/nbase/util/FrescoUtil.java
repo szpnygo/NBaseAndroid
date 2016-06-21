@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -88,7 +87,7 @@ public class FrescoUtil {
      */
     public static File getFileCache(String uri) {
         ImageRequest imageRequest = ImageRequest.fromUri(uri);
-        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest, null);
         BinaryResource resource = ImagePipelineFactory.getInstance()
                 .getMainFileCache().getResource(cacheKey);
         return ((FileBinaryResource) resource).getFile();
@@ -161,7 +160,7 @@ public class FrescoUtil {
         }, CallerThreadExecutor.getInstance());
     }
 
-    public static void closeReference(@Nullable CloseableReference<?> ref) {
+    public static void closeReference(CloseableReference<?> ref) {
         CloseableReference.closeSafely(ref);
     }
 
@@ -219,6 +218,6 @@ public class FrescoUtil {
 
     public interface DatasourceBitmapListener {
 
-        void onNewResultImpl(@Nullable Bitmap bitmap, @Nullable CloseableReference<CloseableImage> reference);
+        void onNewResultImpl(Bitmap bitmap,CloseableReference<CloseableImage> reference);
     }
 }

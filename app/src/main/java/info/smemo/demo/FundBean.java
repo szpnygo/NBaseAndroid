@@ -9,7 +9,7 @@ public class FundBean implements Serializable{
 
     public String id;
     public String title;
-    public String type;
+    public String cId;
     public String img;
 
 }

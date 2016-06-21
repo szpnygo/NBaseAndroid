@@ -39,7 +39,8 @@ public class MainActivity extends NPhotoActivity {
     }
 
     private void httpTest5() {
-        HttpTestBean bean = new HttpTestBean("6");
+        HttpTestBean bean = new HttpTestBean("2");
+        bean.limit = 3;
         bean.execute(FundBean.class, new NBaseAction.HttpActionListListener<List<FundBean>>() {
             @Override
             public void success(List<FundBean> response) {

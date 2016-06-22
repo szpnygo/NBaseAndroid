@@ -6,13 +6,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.facebook.drawee.view.SimpleDraweeView;
-
 import info.smemo.demo.databinding.ActivityScrollingBinding;
 import info.smemo.nbase.base.NBaseAction;
 import info.smemo.nbase.base.NBaseCompatActivity;
 import info.smemo.nbase.util.AnnotationView;
-import info.smemo.nbase.util.FrescoUtil;
 import info.smemo.nbase.util.LogHelper;
 
 public class ScrollingActivity extends NBaseCompatActivity {
@@ -21,11 +18,6 @@ public class ScrollingActivity extends NBaseCompatActivity {
 
     @AnnotationView(R.id.fab)
     private FloatingActionButton fab;
-
-    private Toolbar mToolbar;
-
-    @AnnotationView(R.id.imageView)
-    private SimpleDraweeView imageView;
 
     @Override
     protected void onCreateDataBinding() {
@@ -36,7 +28,7 @@ public class ScrollingActivity extends NBaseCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -47,18 +39,18 @@ public class ScrollingActivity extends NBaseCompatActivity {
             }
         });
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        if (mToolbar != null)
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
 
         NasaAction.getApod(new NBaseAction.HttpActionDataListener<NasaApodBean>() {
             @Override
             public void success(NasaApodBean response) {
                 binding.setApodBean(response);
-                FrescoUtil.loadLowImage(imageView, response.url, response.hdurl);
             }
 
             @Override

@@ -20,12 +20,7 @@ public class NasaAction extends NBaseAction {
                 .maxStale(12, TimeUnit.HOURS)
                 .build();
         get(NasaApodBean.class, "https://api.nasa.gov/planetary/apod?api_key=" + API_KEY, dataListener)
-                .setHttpDataAction(new HttpDataAction() {
-                    @Override
-                    public void getData(String response, HttpDataListener listener) {
-                        listener.success(response);
-                    }
-                })
+                .setHttpDataDirectlyAction()
                 .setMainListener(new HttpDataListener() {
                     @Override
                     public void success(String response) {
@@ -41,5 +36,6 @@ public class NasaAction extends NBaseAction {
                 })
                 .setCacheControl(cacheControl).execute();
     }
+
 
 }

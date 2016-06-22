@@ -45,4 +45,14 @@ public class NasaApodBean extends BaseObservable {
         this.url = url;
         notifyPropertyChanged(info.smemo.demo.BR.url);
     }
+
+    @Bindable
+    public String getHdurl() {
+        return hdurl;
+    }
+
+    public void setHdurl(String hdurl) {
+        this.hdurl = hdurl;
+        notifyPropertyChanged(info.smemo.demo.BR.hdurl);
+    }
 }

@@ -125,6 +125,16 @@ public class HttpBuilder implements AppConstant {
         return this;
     }
 
+    public HttpBuilder setHttpDataDirectlyAction() {
+        this.httpDataAction = new HttpUtil.HttpDataAction() {
+            @Override
+            public void getData(String response, HttpUtil.HttpDataListener listener) {
+                listener.success(response);
+            }
+        };
+        return this;
+    }
+
     public void execute(HttpUtil.HttpDataListener listener) {
         this.setListener(listener);
         doRequest();

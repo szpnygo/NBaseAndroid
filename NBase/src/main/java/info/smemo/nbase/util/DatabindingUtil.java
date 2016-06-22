@@ -16,6 +16,11 @@ public class DatabindingUtil {
         view.setImageURI(url);
     }
 
+    @BindingAdapter({"fresco:smallImage", "fresco:highImage"})
+    public static void setLowImageUri(SimpleDraweeView view, String small, String high) {
+        FrescoUtil.loadLowImage(view, small, high);
+    }
+
     @BindingAdapter({"android:timeFormat", "android:timeValue"})
     public static void formatTime(TextView view, String format, String time) {
         String timeFormat = StringUtil.isEmpty(format) ? "yyyy-MM-dd" : format;

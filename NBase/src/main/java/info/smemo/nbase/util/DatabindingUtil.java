@@ -11,12 +11,12 @@ import java.util.Locale;
 
 public class DatabindingUtil {
 
-    @BindingAdapter({"fresco:actualImageUri"})
+    @BindingAdapter({"android:actualImageUri"})
     public static void setImageUri(SimpleDraweeView view, String url) {
         view.setImageURI(url);
     }
 
-    @BindingAdapter({"fresco:smallImage", "fresco:highImage"})
+    @BindingAdapter({"android:smallImage", "android:highImage"})
     public static void setLowImageUri(SimpleDraweeView view, String small, String high) {
         FrescoUtil.loadLowImage(view, small, high);
     }

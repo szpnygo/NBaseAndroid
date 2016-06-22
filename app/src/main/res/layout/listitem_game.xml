@@ -1,0 +1,54 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+        <variable
+            name="gameBean"
+            type="info.smemo.demo.ztgame.GameBean"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/img"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:actualImageUri="@{gameBean.img}"
+            fresco:placeholderImage="@mipmap/ic_launcher"
+            fresco:placeholderImageScaleType="centerInside"
+            fresco:roundedCornerRadius="8dp"
+            />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@+id/img"
+            android:layout_toRightOf="@+id/img"
+            android:text="@{gameBean.title}"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/img"
+            android:layout_alignStart="@+id/img"
+            android:layout_below="@+id/name"
+            android:layout_margin="8dp"
+            android:text="@{gameBean.detail}"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            />
+    </RelativeLayout>
+
+
+</layout>

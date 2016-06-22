@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
@@ -28,6 +29,8 @@ public class NBaseCompatActivity extends AppCompatActivity implements AppConstan
     protected final BaseHandler mBaseHandler = new BaseHandler(this);
 
     private static final int SHOW_PROGRESS_DIALOG = 0x110001;
+
+    protected Toolbar mToolbar;
 
     protected void onCreateDataBinding() {
 
@@ -51,6 +54,14 @@ public class NBaseCompatActivity extends AppCompatActivity implements AppConstan
         AppManager.getAppManager().finishActivity(this);
         destoryProgressDialog();
         mProgressDialog = null;
+    }
+
+    protected Toolbar setToolBar(int id) {
+        if (mToolbar == null) {
+            mToolbar = (Toolbar) findViewById(id);
+            setSupportActionBar(mToolbar);
+        }
+        return mToolbar;
     }
 
     /**

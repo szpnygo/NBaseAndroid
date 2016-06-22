@@ -39,8 +39,8 @@
                     android:id="@+id/imageViewProfile"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:actualImageUri="@{apodBean.url}"
                     app:layout_collapseMode="parallax"
-                    fresco:actualImageUri="@{apodBean.url}"
                     fresco:placeholderImageScaleType="centerInside"
                     />
 
@@ -82,10 +82,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
                     android:layout_margin="16dp"
+                    android:highImage="@{apodBean.hdurl}"
+                    android:smallImage="@{apodBean.url}"
                     app:layout_collapseMode="parallax"
                     fresco:placeholderImageScaleType="fitCenter"
-                    fresco:smallImage="@{apodBean.url}"
-                    fresco:highImage="@{apodBean.hdurl}"
                     />
             </LinearLayout>
 

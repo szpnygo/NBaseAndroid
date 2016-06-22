@@ -10,6 +10,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import info.smemo.demo.nasa.NasaApodActivity;
+import info.smemo.demo.ztgame.GameListActivity;
 import info.smemo.nbase.adapter.NBaseBindingAdapter;
 import info.smemo.nbase.base.NBaseCompatActivity;
 import info.smemo.nbase.util.AnnotationView;
@@ -23,17 +24,15 @@ public class MainActivity extends NBaseCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         ArrayList<MyMenuItem> menuItems = new ArrayList<>();
         menuItems.add(new MyMenuItem("NASA APOD", new Intent(this, NasaApodActivity.class)));
-        menuItems.add(new MyMenuItem("ZT GAME LIST", new Intent(this, NasaApodActivity.class)));
+        menuItems.add(new MyMenuItem("ZT GAME LIST", new Intent(this, GameListActivity.class)));
 
         NBaseBindingAdapter adapter = new NBaseBindingAdapter<>(menuItems, info.smemo.demo.BR.menuItem, R.layout.listitem_menu);
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(adapter);

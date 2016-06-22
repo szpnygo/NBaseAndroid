@@ -1,5 +1,6 @@
 package info.smemo.demo;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,7 +34,8 @@ public class MainActivity extends NPhotoActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                httpTest5();
+//                httpTest5();
+                startActivity(new Intent(MainActivity.this,ScrollingActivity.class));
             }
         });
     }

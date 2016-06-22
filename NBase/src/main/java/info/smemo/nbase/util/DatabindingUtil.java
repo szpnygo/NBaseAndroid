@@ -1,7 +1,6 @@
 package info.smemo.nbase.util;
 
 import android.databinding.BindingAdapter;
-import android.net.Uri;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -9,11 +8,12 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+
 public class DatabindingUtil {
 
-    @BindingAdapter("android:setImageUri")
+    @BindingAdapter("fresco:actualImageUri")
     public static void setImageUri(SimpleDraweeView view, String url) {
-        view.setImageURI(Uri.parse(url));
+        view.setImageURI(url);
     }
 
     @BindingAdapter({"android:timeFormat", "android:timeValue"})

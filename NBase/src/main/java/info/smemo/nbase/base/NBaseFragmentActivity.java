@@ -42,6 +42,7 @@ public class NBaseFragmentActivity extends FragmentActivity implements AppConsta
         super.onCreate(savedInstanceState);
         onCreateDataBinding();
         AppManager.getAppManager().addActivity(this);
+        ViewInjectUtils.inject(this);
     }
 
     @Override

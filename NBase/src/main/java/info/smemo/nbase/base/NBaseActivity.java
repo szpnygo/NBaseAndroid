@@ -42,6 +42,7 @@ public class NBaseActivity extends Activity implements AppConstant {
         onCreateDataBinding();
         //add activity to activity manager
         AppManager.getAppManager().addActivity(this);
+        ViewInjectUtils.inject(this);
     }
 
     @Override

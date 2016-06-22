@@ -42,6 +42,7 @@ public class NBaseCompatActivity extends AppCompatActivity implements AppConstan
         super.onCreate(savedInstanceState);
         onCreateDataBinding();
         AppManager.getAppManager().addActivity(this);
+        ViewInjectUtils.inject(this);
     }
 
     @Override

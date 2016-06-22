@@ -70,9 +70,9 @@ public class NBaseBindingAdapter<T> extends RecyclerView.Adapter<NBaseViewHolder
     }
 
 
-    public interface OnAdapterClickListener {
+    public interface OnAdapterClickListener<T> {
 
-        void onClick(View view, int position, Object object);
+        void onClick(View view, int position, T object);
 
     }
 }

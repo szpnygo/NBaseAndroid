@@ -1,4 +1,4 @@
-package info.smemo.demo;
+package info.smemo.demo.nasa;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;

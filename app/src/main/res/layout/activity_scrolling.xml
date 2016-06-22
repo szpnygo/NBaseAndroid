@@ -8,7 +8,7 @@
 
         <variable
             name="apodBean"
-            type="info.smemo.demo.NasaApodBean"/>
+            type="info.smemo.demo.nasa.NasaApodBean"/>
     </data>
 
 

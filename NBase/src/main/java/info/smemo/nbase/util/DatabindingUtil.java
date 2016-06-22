@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class DatabindingUtil {
 
-    @BindingAdapter("fresco:actualImageUri")
+    @BindingAdapter({"fresco:actualImageUri"})
     public static void setImageUri(SimpleDraweeView view, String url) {
         view.setImageURI(url);
     }

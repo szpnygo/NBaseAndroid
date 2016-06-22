@@ -1,4 +1,4 @@
-package info.smemo.demo;
+package info.smemo.demo.nasa;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -6,13 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import info.smemo.demo.R;
 import info.smemo.demo.databinding.ActivityScrollingBinding;
 import info.smemo.nbase.base.NBaseAction;
 import info.smemo.nbase.base.NBaseCompatActivity;
 import info.smemo.nbase.util.AnnotationView;
 import info.smemo.nbase.util.LogHelper;
 
-public class ScrollingActivity extends NBaseCompatActivity {
+public class NasaApodActivity extends NBaseCompatActivity {
 
     private ActivityScrollingBinding binding;
 
@@ -55,7 +56,7 @@ public class ScrollingActivity extends NBaseCompatActivity {
 
             @Override
             public void error(int code, String message, boolean inMain) {
-                LogHelper.e(message);
+                LogHelper.e("code:" + code + " msg" + message);
             }
         });
 

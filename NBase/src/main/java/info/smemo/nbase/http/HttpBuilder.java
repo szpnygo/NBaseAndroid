@@ -114,7 +114,7 @@ public class HttpBuilder implements AppConstant {
 
             @Override
             public void error(int code, String message) {
-
+                listener.error(code, message);
             }
         };
         return this;

@@ -1,4 +1,4 @@
-package info.smemo.demo;
+package info.smemo.demo.nasa;
 
 import com.google.gson.Gson;
 

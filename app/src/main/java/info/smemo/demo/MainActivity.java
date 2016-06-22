@@ -1,140 +1,49 @@
 package info.smemo.demo;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import java.util.ArrayList;
 
-import java.util.HashMap;
-import java.util.List;
+import info.smemo.demo.nasa.NasaApodActivity;
+import info.smemo.nbase.adapter.NBaseBindingAdapter;
+import info.smemo.nbase.base.NBaseCompatActivity;
+import info.smemo.nbase.util.AnnotationView;
 
-import info.smemo.nbase.activity.NPhotoActivity;
-import info.smemo.nbase.base.NBaseAction;
-import info.smemo.nbase.util.FrescoUtil;
-import info.smemo.nbase.util.LogHelper;
+@AnnotationView(R.layout.activity_main)
+public class MainActivity extends NBaseCompatActivity {
 
-public class MainActivity extends NPhotoActivity {
-
-    SimpleDraweeView mImageView;
-
-    private TextView mButton;
+    @AnnotationView(R.id.recyclerView)
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mButton = (TextView) findViewById(R.id.button);
-        mImageView = (SimpleDraweeView) findViewById(R.id.imageView);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        mButton.setOnClickListener(new View.OnClickListener() {
+        ArrayList<MyMenuItem> menuItems = new ArrayList<>();
+        menuItems.add(new MyMenuItem("NASA APOD", new Intent(this, NasaApodActivity.class)));
+        menuItems.add(new MyMenuItem("ZT GAME LIST", new Intent(this, NasaApodActivity.class)));
+
+        NBaseBindingAdapter adapter = new NBaseBindingAdapter<>(menuItems, info.smemo.demo.BR.menuItem, R.layout.listitem_menu);
+
+        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(adapter);
+        adapter.setListener(new NBaseBindingAdapter.OnAdapterClickListener<MyMenuItem>() {
             @Override
-            public void onClick(View v) {
-//                httpTest5();
-                startActivity(new Intent(MainActivity.this,ScrollingActivity.class));
+            public void onClick(View view, int position, MyMenuItem object) {
+                startActivity(object.mIntent);
             }
         });
     }
 
-    private void httpTest5() {
-        HttpTestBean bean = new HttpTestBean("2");
-        bean.limit = 3;
-        bean.execute(FundBean.class, new NBaseAction.HttpActionListListener<List<FundBean>>() {
-            @Override
-            public void success(List<FundBean> response) {
-                LogHelper.e(TAG, response.size() + "length");
-            }
-
-            @Override
-            public void error(int code, String message, boolean inMain) {
-                LogHelper.e(TAG, "error " + message + ":" + code);
-            }
-        });
-    }
-
-
-    /**
-     * 测试GET请求单条数据
-     */
-    private void httpTest1() {
-        NBaseAction.get(InfoBean.class, "http://api.smemo.info/api.php/v2/info/info?type=devloper", new NBaseAction.HttpActionDataListener<InfoBean>() {
-            @Override
-            public void success(InfoBean response) {
-                LogHelper.e(TAG, response.msg);
-            }
-
-            @Override
-            public void error(int code, String message, boolean inMain) {
-                LogHelper.e(TAG, "error " + message + ":" + code);
-            }
-        }).execute();
-    }
-
-    /**
-     * 测试GET请求多条数据
-     */
-    private void httpTest2() {
-        NBaseAction.get(FundBean.class, "https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html", new NBaseAction.HttpActionListListener<List<FundBean>>() {
-            @Override
-            public void success(List<FundBean> response) {
-                LogHelper.e(TAG, response.size() + "length");
-            }
-
-            @Override
-            public void error(int code, String message, boolean inMain) {
-                LogHelper.e(TAG, "error " + message + ":" + code);
-            }
-        }).execute();
-    }
-
-    /**
-     * 测试POST请求单挑数据
-     */
-    private void httpTest3() {
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("id", 6);
-        NBaseAction.post(FundBean.class, "https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html", data, new NBaseAction.HttpActionListListener<List<FundBean>>() {
-            @Override
-            public void success(List<FundBean> response) {
-                LogHelper.e(TAG, response.size() + "length");
-            }
-
-            @Override
-            public void error(int code, String message, boolean inMain) {
-                LogHelper.e(TAG, "error " + message + ":" + code);
-            }
-        }).execute();
-    }
-
-    /**
-     * 测试POST请求多条数据
-     */
-    private void httpTest4() {
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("id", 6);
-        NBaseAction.post(InfoBean.class, "http://api.smemo.info/api.php/v2/info/info", data, new NBaseAction.HttpActionDataListener<InfoBean>() {
-            @Override
-            public void success(InfoBean response) {
-                LogHelper.e(TAG, response.msg);
-            }
-
-            @Override
-            public void error(int code, String message, boolean inMain) {
-                LogHelper.e(TAG, "error " + message + ":" + code);
-            }
-        }).addQuery("type", "devloper").execute();
-
-    }
-
-
-    @Override
-    public void takePhotoSuccess(@NonNull Uri imageFile, @Nullable String path) {
-        super.takePhotoSuccess(imageFile, path);
-        FrescoUtil.loadImageWithFixSize(mImageView, imageFile, 200, 200);
-    }
 
 }

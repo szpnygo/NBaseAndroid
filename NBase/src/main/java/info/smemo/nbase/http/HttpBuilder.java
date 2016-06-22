@@ -6,6 +6,7 @@ import java.util.Set;
 
 import info.smemo.nbase.app.AppConstant;
 import info.smemo.nbase.util.StringUtil;
+import info.smemo.nbase.util.ThreadUtil;
 import okhttp3.CacheControl;
 
 /**
@@ -96,6 +97,26 @@ public class HttpBuilder implements AppConstant {
 
     public HttpBuilder setListener(HttpUtil.HttpDataListener listener) {
         this.listener = listener;
+        return this;
+    }
+
+    public HttpBuilder setMainListener(final HttpUtil.HttpDataListener listener) {
+        this.listener = new HttpUtil.HttpDataListener() {
+            @Override
+            public void success(final String response) {
+                ThreadUtil.newThreadMain(new ThreadUtil.ThreadRunnableMain() {
+                    @Override
+                    public void inMain() {
+                        listener.success(response);
+                    }
+                });
+            }
+
+            @Override
+            public void error(int code, String message) {
+
+            }
+        };
         return this;
     }
 

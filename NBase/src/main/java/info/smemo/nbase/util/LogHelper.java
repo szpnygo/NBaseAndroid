@@ -1,7 +1,5 @@
 package info.smemo.nbase.util;
 
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
@@ -17,78 +15,64 @@ public class LogHelper implements AppConstant {
 
     public static boolean isPrintLog = !isLogDebug;
 
-    public static void d(String tag, Class cls, String message) {
-        if (isPrintLog)
-            return;
-        d(tag, cls.getSimpleName() + " >>>>>>> " + message);
-    }
-
-    public static void d(Class cls, String message) {
-        if (isPrintLog)
-            return;
-        d(TAG, cls.getSimpleName() + " >>>>>>> " + message);
-    }
-
     public static void d(String tag, String message) {
         if (isPrintLog)
             return;
-        Log.d(tag, Thread.currentThread().getName() + " >>>>>>> " + message);
+        Logger.init(tag).methodOffset(0).methodCount(1);
+        Logger.d(tag, message);
     }
 
-    public static void i(String tag, Class cls, String message) {
+    public static void d(String message) {
         if (isPrintLog)
             return;
-        i(tag, cls.getSimpleName() + " >>>>>>> " + message);
-    }
-
-    public static void i(Class cls, String message) {
-        if (isPrintLog)
-            return;
-        i(TAG, cls.getSimpleName() + " >>>>>>> " + message);
+        Logger.init(AppConstant.TAG).methodOffset(0).methodCount(1);
+        Logger.d(message);
     }
 
     public static void i(String tag, String message) {
         if (isPrintLog)
             return;
+        Logger.init(tag).methodOffset(0).methodCount(1);
         Logger.i(message);
     }
 
-    public static void w(String tag, Class cls, String message) {
+    public static void i(String message) {
         if (isPrintLog)
             return;
-        w(tag, cls.getSimpleName() + " >>>>>>> " + message);
-    }
-
-    public static void w(Class cls, String message) {
-        if (isPrintLog)
-            return;
-        w(TAG, cls.getSimpleName() + " >>>>>>> " + message);
+        Logger.init(AppConstant.TAG).methodOffset(0).methodCount(1);
+        Logger.i(message);
     }
 
     public static void w(String tag, String message) {
         if (isPrintLog)
             return;
+        Logger.init(tag).methodOffset(0).methodCount(1);
         Logger.w(message);
     }
 
-    public static void e(String tag, Class cls, String message) {
+    public static void w(String message) {
         if (isPrintLog)
             return;
-        e(tag, cls.getSimpleName() + " >>>>>>> " + message);
-    }
-
-    public static void e(Class cls, String message) {
-        if (isPrintLog)
-            return;
-        e(TAG, cls.getSimpleName() + " >>>>>>> " + message);
+        Logger.init(AppConstant.TAG).methodOffset(0).methodCount(1);
+        Logger.w(message);
     }
 
     public static void e(String tag, String message) {
         if (isPrintLog)
             return;
+        Logger.init(tag).methodOffset(0).methodCount(1);
         Logger.e(message);
         saveLog(" [ " + TimeUtil.getTime() + " ] " + message);
     }
+
+    public static void e(String message) {
+        if (isPrintLog)
+            return;
+        Logger.init(AppConstant.TAG).methodOffset(1).methodCount(1);
+        Logger.e(message);
+        saveLog(" [ " + TimeUtil.getTime() + " ] " + message);
+    }
+
 
     public static void saveLog(String message) {
         if (!isAllowLogFile) {

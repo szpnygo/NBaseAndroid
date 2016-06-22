@@ -200,4 +200,7 @@ public class NBaseAction extends HttpUtil {
     }
 
 
+    public static boolean isMainThread() {
+        return Thread.currentThread().getName().contains("main");
+    }
 }

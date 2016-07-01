@@ -7,8 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import info.smemo.demo.down.GameDownActivity;
 import info.smemo.demo.nasa.NasaApodActivity;
 import info.smemo.demo.ztgame.GameListActivity;
 import info.smemo.nbase.adapter.NBaseBindingAdapter;
@@ -21,6 +23,8 @@ public class MainActivity extends NBaseCompatActivity {
     @AnnotationView(R.id.recyclerView)
     private RecyclerView mRecyclerView;
 
+    Field
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +34,7 @@ public class MainActivity extends NBaseCompatActivity {
         ArrayList<MyMenuItem> menuItems = new ArrayList<>();
         menuItems.add(new MyMenuItem("NASA APOD", new Intent(this, NasaApodActivity.class)));
         menuItems.add(new MyMenuItem("ZT GAME LIST", new Intent(this, GameListActivity.class)));
+        menuItems.add(new MyMenuItem("DOWN GAME", new Intent(this, GameDownActivity.class)));
 
         NBaseBindingAdapter adapter = new NBaseBindingAdapter<>(menuItems, info.smemo.demo.BR.menuItem, R.layout.listitem_menu);
 

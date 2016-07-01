@@ -26,6 +26,8 @@ public class NBaseCompatActivity extends AppCompatActivity implements AppConstan
     protected ProgressDialog mProgressDialog;
     private MaterialDialog mMessageDialog;
 
+    protected String API_GAME_LIST = "https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html";
+
     protected final BaseHandler mBaseHandler = new BaseHandler(this);
 
     private static final int SHOW_PROGRESS_DIALOG = 0x110001;

@@ -60,6 +60,5 @@ public class NasaApodActivity extends NBaseCompatActivity {
             }
         });
 
-
     }
 }

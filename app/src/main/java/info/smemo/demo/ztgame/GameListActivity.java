@@ -28,6 +28,8 @@ public class GameListActivity extends NBaseCompatActivity {
 
     private ArrayList<GameBean> gameList = new ArrayList<>();
 
+    private NBaseBindingAdapter adapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,15 +40,16 @@ public class GameListActivity extends NBaseCompatActivity {
             }
         });
 
-        final NBaseBindingAdapter adapter = new NBaseBindingAdapter<>(gameList, BR.gameBean, R.layout.listitem_game);
+        adapter = new NBaseBindingAdapter<>(gameList, BR.gameBean, R.layout.listitem_game);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(adapter);
 
-        NBaseAction.get(GameBean.class, "https://wxfl.ztgame.com/king/index.php/Player/Games/getGames.html", new NBaseAction.HttpActionListListener<List<GameBean>>() {
+        NBaseAction.get(GameBean.class, API_GAME_LIST, new NBaseAction.HttpActionListListener<List<GameBean>>() {
             @Override
             public void success(List<GameBean> response) {
+                gameList.clear();
                 for (GameBean bean : response)
                     gameList.add(bean);
                 adapter.notifyDataSetChanged();

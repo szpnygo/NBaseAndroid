@@ -23,8 +23,6 @@ public class MainActivity extends NBaseCompatActivity {
     @AnnotationView(R.id.recyclerView)
     private RecyclerView mRecyclerView;
 
-    Field
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

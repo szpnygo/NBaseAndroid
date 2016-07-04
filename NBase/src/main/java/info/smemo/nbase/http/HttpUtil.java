@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import info.smemo.nbase.app.AppConstant;
+import info.smemo.nbase.app.NBaseConfig;
 import info.smemo.nbase.base.NBaseApplication;
 import info.smemo.nbase.util.LogHelper;
 import info.smemo.nbase.util.StringUtil;
@@ -66,10 +67,10 @@ public class HttpUtil implements AppConstant {
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
         builder.cookieJar(NCookieManager.getInstance().getCookieJar());
         if (NBaseApplication.getContext() != null)
-            builder.cache(new Cache(NBaseApplication.getContext().getCacheDir(), MAX_HTTP_CACHE_SIZE));
-        builder.connectTimeout(HTTP_CONNECT_TIMEOUT, TimeUnit.SECONDS);
-        builder.writeTimeout(HTTP_WRITE_TIMEOUT, TimeUnit.SECONDS);
-        builder.readTimeout(HTTP_READ_TIMEOUR, TimeUnit.SECONDS);
+            builder.cache(new Cache(NBaseApplication.getContext().getCacheDir(), NBaseConfig.getInstance().MAX_HTTP_CACHE_SIZE));
+        builder.connectTimeout(NBaseConfig.getInstance().HTTP_CONNECT_TIMEOUT, TimeUnit.SECONDS);
+        builder.writeTimeout(NBaseConfig.getInstance().HTTP_WRITE_TIMEOUT, TimeUnit.SECONDS);
+        builder.readTimeout(NBaseConfig.getInstance().HTTP_READ_TIMEOUR, TimeUnit.SECONDS);
         return builder.build();
     }
 

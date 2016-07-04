@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import info.smemo.nbase.app.NBaseConfig;
 import info.smemo.nbase.base.NBaseFragmentActivity;
 import info.smemo.nbase.util.ImageUtils;
 import info.smemo.nbase.util.PackageUtil;
@@ -169,7 +170,7 @@ public class NPhotoActivity extends NBaseFragmentActivity {
      */
     private void doCropPhotoAction() {
         // 创建文件存储目录
-        File fileDir = new File(PHOTO_CACHE_PATH);
+        File fileDir = new File(NBaseConfig.getInstance().PHOTO_CACHE_PATH);
         try {
             // 文件目录
             if (!fileDir.exists()) {
@@ -201,7 +202,7 @@ public class NPhotoActivity extends NBaseFragmentActivity {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 创建目录
-        File fileDir = new File(PHOTO_CACHE_PATH);
+        File fileDir = new File(NBaseConfig.getInstance().PHOTO_CACHE_PATH);
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }

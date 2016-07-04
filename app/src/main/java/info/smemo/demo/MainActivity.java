@@ -7,13 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import info.smemo.demo.down.GameDownActivity;
 import info.smemo.demo.nasa.NasaApodActivity;
 import info.smemo.demo.ztgame.GameListActivity;
 import info.smemo.nbase.adapter.NBaseBindingAdapter;
+import info.smemo.nbase.app.NBaseConfig;
 import info.smemo.nbase.base.NBaseCompatActivity;
 import info.smemo.nbase.util.AnnotationView;
 
@@ -28,6 +28,8 @@ public class MainActivity extends NBaseCompatActivity {
         super.onCreate(savedInstanceState);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        NBaseConfig.getInstance().setNbaseTag("NBaseDemo").setAllowLogFile(false);
 
         ArrayList<MyMenuItem> menuItems = new ArrayList<>();
         menuItems.add(new MyMenuItem("NASA APOD", new Intent(this, NasaApodActivity.class)));

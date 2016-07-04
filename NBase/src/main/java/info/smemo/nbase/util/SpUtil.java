@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 
 import info.smemo.nbase.app.AppConstant;
+import info.smemo.nbase.app.NBaseConfig;
 
 public class SpUtil implements AppConstant {
     /**
@@ -14,34 +15,34 @@ public class SpUtil implements AppConstant {
     public static final int mode = ((__sdkLevel > 10) ? 4 : 0);
 
     public static String getSpString(Context context, String key) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME, mode);
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME, mode);
         return mySharedPreferences.getString(key, "");
     }
 
     public static String getSpString(Context context, String key, String defaut) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME, mode);
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME, mode);
         return mySharedPreferences.getString(key, defaut);
     }
 
     public static int getSpInt(Context context, String key) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME, mode);
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME, mode);
         return mySharedPreferences.getInt(key, 0);
     }
 
     public static int getSpInt(Context context, String key, int defaultNum) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME, mode);
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME, mode);
         return mySharedPreferences.getInt(key, defaultNum);
     }
 
     public static Boolean getSpBoolean(Context context, String key, boolean chioce) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME, mode);
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME, mode);
         return mySharedPreferences.getBoolean(key, chioce);
 
     }
 
     public static void saveSpString(Context context, String key, String value) {
         if (StringUtil.isEmpty(value) || value.equals("null")) value = "";
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME,
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME,
                 mode);
         SharedPreferences.Editor editor = mySharedPreferences.edit();
         editor.putString(key, value);
@@ -49,7 +50,7 @@ public class SpUtil implements AppConstant {
     }
 
     public static void saveSpInt(Context context, String key, int value) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME,
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME,
                 mode);
         SharedPreferences.Editor editor = mySharedPreferences.edit();
         editor.putInt(key, value);
@@ -57,7 +58,7 @@ public class SpUtil implements AppConstant {
     }
 
     public static void saveSpBoolean(Context context, String key, Boolean value) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME,
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME,
                 mode);
         SharedPreferences.Editor editor = mySharedPreferences.edit();
         editor.putBoolean(key, value);
@@ -65,7 +66,7 @@ public class SpUtil implements AppConstant {
     }
 
     public static void remove(Context context, String key) {
-        SharedPreferences mySharedPreferences = context.getSharedPreferences(SP_NAME,
+        SharedPreferences mySharedPreferences = context.getSharedPreferences(NBaseConfig.getInstance().SP_NAME,
                 mode);
         SharedPreferences.Editor editor = mySharedPreferences.edit();
         editor.remove(key);
